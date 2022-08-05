@@ -12,3 +12,6 @@
 ## Utilisation
 
 ## Perspectives
+
+## To-do 
+- Transformation de toutes les listes en vecteur Numpy et enlever toutes les boucles
