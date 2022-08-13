@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 # ! Conditions initiales de vols 
 # TODO : Mettre sous forme d'Input et faire des vérifications sur le format
+# TODO : Mettre en place une librairie 
 Vb = 2
 Diametre_bouteille = 8.9
 Diametre_sortie = 0.9
