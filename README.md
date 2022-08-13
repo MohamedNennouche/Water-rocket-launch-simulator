@@ -41,3 +41,6 @@
 - [x] X(m)
 - [x] Y(m)
 - [x] Accélération
+### Script final 
+- [ ] Conditions initiales sous forme d'input
+- [ ] Rendre le code modulaire (sous forme de fonctions) et en faire une librairie (donc rendre le code sous forme d'orienté objet)
