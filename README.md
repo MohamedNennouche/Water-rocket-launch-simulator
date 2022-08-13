@@ -14,4 +14,30 @@
 ## Perspectives
 
 ## To-do 
-- Transformation de toutes les listes en vecteur Numpy et enlever toutes les boucles
+### Colonnes
+#### Faites
+- [x] Volume air
+- [x] Pression air
+- [x] Temps
+- [x] Vitesse d'éjection
+- [x] Poussée
+- [x] Inclinaison
+- [x] Masse de la fusée
+- [x] Vitesse de la fusée
+- [x] Résistance de l'air
+- [x] X(m)
+- [x] Y(m)
+- [x] Accélération
+#### Validées
+- [x] Volume air
+- [x] Pression air
+- [x] Temps
+- [x] Vitesse d'éjection
+- [x] Poussée
+- [x] Inclinaison
+- [x] Masse de la fusée
+- [x] Vitesse de la fusée
+- [x] Résistance de l'air
+- [x] X(m)
+- [x] Y(m)
+- [x] Accélération
