@@ -177,3 +177,7 @@ my_data = np.array([volumes_air,pression_air,temps,vitesse,poussee,masse_fusee,i
 colonnes = ["Volume d'air","Pression d'air","Temps","Vitesse","Poussée","Masse de la fusée","Inclinaison","Vitesse de la fusée","Résistance de l'air","x(t)","y(t)","Accélération"]
 
 tableau_complet = pd.DataFrame(my_data, columns=colonnes)
+
+# ! Enregistrement sous format CSV
+# mettre ou sauvegarder le fichier sous forme d'input
+tableau_complet.to_csv("simulateur_tir.csv",index=False)
