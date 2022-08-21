@@ -171,7 +171,7 @@ for i in range(1,599) :
     else : 
         acceleration.append((vitesse_fusee[i]-vitesse_fusee[i-1])/(temps[i]-temps[i-1]))
 
-# ! Tableau final
+# ! Tableau final : garder que les y>=0 
 my_data = np.array([volumes_air,pression_air,temps,vitesse,poussee,masse_fusee,inclinaison_rampe,vitesse_fusee,resistance_air,x,y,acceleration]).T
 
 colonnes = ["Volume d'air","Pression d'air","Temps","Vitesse","Poussée","Masse de la fusée","Inclinaison","Vitesse de la fusée","Résistance de l'air","x(t)","y(t)","Accélération"]
