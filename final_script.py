@@ -330,6 +330,7 @@ plt.savefig('table_highlights.png',
             dpi=150
             )
 # ! Génération du PDF
+# TODO : Ajouter la partie théorique au rapport PDF ainsi que les variables d'entrées
 ## Styles 
 def create_style(styleName, fontName='Helvetica', fontSize=12, parent='Normal', alignment='right', spaceAfter=10) :
 
