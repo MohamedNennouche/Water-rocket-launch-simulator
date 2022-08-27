@@ -25,6 +25,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 # TODO : ajouter éventuellement la masse volumique du liquide en entrée pour évaluer l'utilisation d'autres liquide que l'eau
 # TODO : Ajouter fonction d'affichage de la vitesse de sortie et du beta
 # TODO : Pour l'affichage de la vitesse de sortie de vitesse ajouter la fonctionnalité en m/s en km/h ou en G
+# TODO : Revoir la structure des fonctions pour éviter les dépendances circulaires et les erreurs d'index (peut être n'avoir qu'une seule et même fonction qui calcule toutes les variables)
+# TODO : ajouter une doc pour toutes les fonctions et ajouter des variables d'entrées plus expressive (a : int) 
 
 # Vb = bottle_volume
 # Diametre_bouteille = d_bottle
@@ -82,6 +84,8 @@ class WaterRocket :
         self.output_section = (d_output**2)*np.pi/40000
         # conversion en mètre
         self.length_rampe = length_rampe/100
+        # conversion en pascal
+        self.initial_pressure= initial_pressure*100000
 
         ## Calcul de la vitesse de sortie de rampe
         # Accélération suivant x
@@ -109,3 +113,64 @@ class WaterRocket :
         self.x = list()
         self.y = list()
         self.acceleration_y = [0]
+
+    def calc_air_volume(self) :
+        if len(self.air_volume) == 1 :
+            final_air_volume = (self.initial_pressure + Patm)*(self.bottle_volume-self.initial_water_volume)/Patm
+            # Premiere phase
+            for i in range(28) :
+                self.air_volume.append(self.air_volume[i] + (self.bottle_volume-self.air_volume[0])/29)
+            self.air_volume+[self.bottle_volume,self.bottle_volume]
+            # Début deuxième phase
+            for i in range(30,48) :
+                self.air_volume.append(self.air_volume[i] + (final_air_volume-self.air_volume[30])/19)
+            # Fin deuxième phase
+            self.air_volume.append(final_air_volume)
+            for i in range(549) :
+                self.air_volume.append(0)
+        return self.air_volume
+    
+    def calc_pressure(self):
+        if len(self.air_volume) == 1 : 
+            self.calc_air_volume()
+        for i in range(50) : 
+            self.air_pressure.append(((self.initial_pressure + Patm)*(self.bottle_volume-self.initial_water_volume)/self.air_volume[i])-Patm)
+        for i in range(549) :
+            self.air_pressure.append(0)
+        return self.air_pressure
+    
+    def calc_ejection_velocity(self):
+        # TODO : écrire sous forme de list comprehension
+        if len(self.air_pressure) == 0 :
+            self.calc_pressure()
+        for i in range(30) :
+            self.ejection_velocity.append(np.sqrt(2*self.air_pressure[i]/self.beta))
+        # Phase 2
+        for i in range(20) :
+            self.ejection_velocity.append(np.sqrt(2*self.air_pressure[i+30]/ra))
+        for i in range(549) :
+            self.ejection_velocity.append(0)
+        return self.ejection_velocity
+    
+    def calcTemps(self):
+        if len(self.air_volume) == 1 : 
+            self.calc_air_volume()
+        if len(self.ejection_velocity) == 0 : 
+            self.calc_ejection_velocity()
+
+        for i in range(30) : 
+            self.time.append(((2/3)*self.air_volume[i]**1.5 - (2/3)*(self.bottle_volume-self.initial_water_volume)**1.5)/(self.output_section*np.sqrt(2*self.initial_pressure*(self.bottle_volume-self.initial_water_volume)/self.beta)))
+        # Phase intermédiaire 1
+        self.time.append((((2/3)*self.air_volume[30]**1.5 - (2/3)*(self.bottle_volume)**1.5)/(self.output_section*np.sqrt(2*self.initial_pressure*(self.bottle_volume-self.initial_water_volume)/self.beta)))+self.time[29])
+        # Phase 2
+        for i in range(19) : 
+            self.time.append(self.time[30+i]+((self.air_volume[31+i]-self.air_volume[30+i])/(self.output_section*((self.ejection_velocity[31+i]+self.ejection_velocity[30+i])/2))))
+        # Phase intermédiaire 2
+        self.time.append(self.time[49])
+        self.time.append(self.time[50]+0.01)
+        # Phase 3
+        for i in range(547) :
+            self.time.append(self.time[i + 51]+ 0.05)
+        return self.time
+        
+
