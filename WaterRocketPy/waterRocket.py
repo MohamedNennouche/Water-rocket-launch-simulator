@@ -254,5 +254,3 @@ class WaterRocket :
         for i in range(569) :
             self.rocket_mass.append(self.m_empty_rocket)
         return self.rocket_mass
-    
-    
