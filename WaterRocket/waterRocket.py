@@ -760,6 +760,9 @@ class WaterRocket :
             - path_to_save_pdf (str, optional): The relative of full path for saving the report as pdf. Defaults to "report.pdf"
             - saveImgs (bool, optional): Define if you would save the image of plot or not. Defaults to False.
             - author (str, optional): The author name to add in the report
+        
+        Returns : 
+        - The function returns a PDF report with all graphics and commentary
         """
         myTitle = self.create_style('myheading', fontName='Helvetica-Bold', fontSize=32, parent='Heading1', alignment='center',spaceAfter=24)
         mySubtitle = self.create_style('mysubheading', fontName='Helvetica-Bold', fontSize=20, parent='Heading2', alignment='left',spaceAfter=16)
