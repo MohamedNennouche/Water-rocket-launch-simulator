@@ -428,18 +428,91 @@ class WaterRocket :
         - self.rocket_data (Dataframe): Pandas Dataframe containing all caracteristics of the flight
         """
         self.calc_all_caracteristics()
-
-        data = np.array([self.air_volume, self.air_pressure, self.time, self.ejection_velocity, self.dust, self.rocket_mass, self.rampe_tilt, self.v_rocket, self.air_resistance, self.x, self.y, self.acceleration_y]).T
-        
-        columns = ["Air volume","Air pressure","Time","Ejection velocity","Dust","Rocket mass","Tilt","Rocket velocity","Air resistance","x","y","Acceleration"]
-
-        self.rocket_data = pd.DataFrame(data, columns=columns)
-
-        # Mask 
-
-        self.rocket_data = self.rocket_data[self.rocket_data["y"]>=0]
-
+        if len(self.rocket_data) == 0 :
+            data = np.array([self.air_volume, self.air_pressure, self.time, self.ejection_velocity, self.dust, self.rocket_mass, self.rampe_tilt, self.v_rocket, self.air_resistance, self.x, self.y, self.acceleration_y]).T
+            columns = ["Air volume","Air pressure","Time","Ejection velocity","Dust","Rocket mass","Tilt","Rocket velocity","Air resistance","x","y","Acceleration"]
+            self.rocket_data = pd.DataFrame(data, columns=columns)
+            # Mask 
+            self.rocket_data = self.rocket_data[self.rocket_data["y"]>=0]
         if save_as_CSV :
             self.rocket_data.to_csv("Rocket_data.csv",index=False)
-        
         return self.rocket_data
+    
+    def graphic_trajectory_with_highlights(self, save_fig=False) : 
+        
+        data = self.create_df(save_as_CSV=False)
+
+        plt.figure(figsize=(15,6))
+        plt.plot(data["x"],data["y"], label="Flight path")
+        plt.scatter(data["x"].loc[data["y"].argmax()],data["y"].loc[data["y"].argmax()], label='Apogee', marker="x", s=90, color=(0.25,0.25,0.5))
+        plt.scatter(data["x"].loc[data["Rocket velocity"].argmax()],data["y"].loc[data["Rocket velocity"].argmax()], label='Max velocity', marker="+", s=90, color=(0.1,0.5,0.1))
+        plt.scatter(data["x"].loc[data["Dust"].argmax()],data["y"].loc[data["Dust"].argmax()], label='Max dust', marker="x", s=90, color=(0.9,0.4,0.5))
+        plt.scatter(data["x"].loc[data["Acceleration"].argmax()],data["y"].loc[data["Acceleration"].argmax()], label='Max Acceleration', marker="x", s=90, color=(0.3,0.4,0.5))
+
+        plt.scatter(data["x"].loc[data["Air resistance"].argmax()],data["y"].loc[data["Air resistance"].argmax()], label="Max air resistance", marker="2", s=90, color=(0.1,0.1,0.1))
+        plt.legend()
+        font = {'family': 'sans-serif',
+            'color':  'black',
+            'weight': 'bold',
+            'size': 16,
+            }
+        plt.title("Flight path with highlights",fontdict=font)
+        plt.xlabel("Distance (m)",fontsize=14)
+        plt.ylabel("Height (m)", fontsize=14)
+
+        if save_fig :
+            if not os.path.isdir("./img") :
+                os.mkdir("./img")
+            plt.savefig("./img/flight_path.png",bbox_inches='tight')
+        plt.show()
+    
+    def graphic_decomposed_trajectory(self, save_fig=False) :
+
+        data = self.create_df(save_as_CSV=False)
+
+        plt.figure(figsize=(15,6))
+        font = {'family': 'sans-serif',
+            'color':  'black',
+            'weight': 'bold',
+            'size': 16,
+            }
+        plt.plot(data["x"].loc[:29],data["y"].loc[:29], label="Water dust", marker="+", alpha=0.7)
+        plt.plot(data["x"].loc[30:49],data["y"].loc[30:49], label="Air dust", marker="x", alpha=0.7)
+        plt.plot(data["x"].loc[50:],data["y"].loc[50:], label="Residual dust", marker="o", alpha=0.7)
+        plt.legend()
+        plt.title("Decomposed flight path", fontdict=font)
+        plt.xlabel("Distance (m)",fontsize=14)
+        plt.ylabel("Height (m)", fontsize=14)
+
+        if save_fig :
+            if not os.path.isdir("./img") :
+                os.mkdir("./img")
+            plt.savefig("./img/decomposed_flight_path.png",bbox_inches='tight')
+        plt.show()
+
+    def graphic_velocity_x(self, save_fig=False) :
+
+        data = self.create_df(save_as_CSV=False)
+
+        plt.figure(figsize=(17,6))
+        font = {'family': 'sans-serif',
+            'color':  'black',
+            'weight': 'bold',
+            'size': 16,
+            }
+        plt.plot(data["x"],data["Rocket velocity"], label="Flight speed evolution")
+        plt.scatter(data["x"].loc[119],data["Rocket velocity"].loc[119], marker="+", label="Apogee", c="r", s=150)
+        x_cast = "{:.2f}".format(data["x"].loc[data["y"].argmax()])
+        y_cast = "{:.2f}".format(data["y"].loc[data["y"].argmax()])
+        plt.text(data["x"].loc[119]+0.5,data["Rocket velocity"].loc[119], "x = {}\ny = {}".format(x_cast,y_cast))
+        plt.legend()
+        plt.title("Speed of the rocket as a function of x", fontdict=font)
+        plt.xlabel("Distance (m)",fontsize=14)
+        plt.ylabel("Vitesse (m/s)", fontsize=14)
+
+        if save_fig :
+            if not os.path.isdir("./img") :
+                os.mkdir("./img")
+            plt.savefig("./img/velocity_x.png", bbox_inches='tight')
+        plt.show()
+
