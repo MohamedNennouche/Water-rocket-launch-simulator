@@ -55,12 +55,6 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 # acceleration = acceletation_y
 
 
-# CONSTANTE
-g = 9.81 # gravité
-r = 998 # densité de l'eau en Kg/m^3
-ra = 1.2 # densité de l'air en Kg/m^3
-Patm = 101325 # pression atmosphérique
-
 class WaterRocket : 
     
     def __init__(
@@ -143,6 +137,13 @@ class WaterRocket :
     def calc_air_volume(self) :
         """Function calculating the air volume variations in the cylinder from its launch
 
+        Args: 
+            In order to calculate the volume of air, the following quantities are required:
+        - The initial pressure (self.initial_pressure)
+        - The bottle volume (self.bottle_volume)
+        - The initial water volume (self.initial_water_volume)
+        - The atmospheric pressure (self.p_atm)
+
         Returns:
             self.air_volume (list): Returns the list of elements of the air volume completely filled (initially containing only the first element)
         """
@@ -164,19 +165,35 @@ class WaterRocket :
     def calc_pressure(self):
         """Function calculating the relative pressure variation inside the bottle
 
+        Args: 
+            In order to calculate the internal pressure, the following quantities are required:
+        - The air volume (self.air_volume)
+        - The initial pressure (self.initial_pressure)
+        - The bottle volume (self.bottle_volume)
+        - The initial water volume (self.initial_water_volume)
+        - The atmospheric pressure (self.p_atm)
+
         Returns:
             self.air_pressure (list):Returns the list of elements of the pressure completely filled (initially empty)
         """
-        if len(self.air_volume) == 1 : 
-            self.calc_air_volume()
-        for i in range(50) : 
-            self.air_pressure.append(((self.initial_pressure + self.p_atm)*(self.bottle_volume-self.initial_water_volume)/self.air_volume[i])-self.p_atm)
-        for i in range(549) :
-            self.air_pressure.append(0)
+        if len(self.air_pressure) == 0 :
+            if len(self.air_volume) == 1 : 
+                self.calc_air_volume()
+
+            for i in range(50) : 
+                self.air_pressure.append(((self.initial_pressure + self.p_atm)*(self.bottle_volume-self.initial_water_volume)/self.air_volume[i])-self.p_atm)
+            for i in range(549) :
+                self.air_pressure.append(0)
         return self.air_pressure
     
     def calc_ejection_velocity(self):
         """Function calculating the ejection velocity variation in two phases : water ejection and air ejection
+
+        Args: 
+            In order to calculate the ejection velocity, the following quantities are required:
+            - The air pressure (self.air_pressure)
+            - The beta depending on water density used (self.beta, self.r)
+            - The air density (self.ra)
 
         Returns:
             self.ejection_velocity (list): Returns the list of elements of the ejection velocity completely filled (initially empty)
@@ -194,63 +211,158 @@ class WaterRocket :
                 self.ejection_velocity.append(0)
         return self.ejection_velocity
     
-    def calcTemps(self):
+    def calc_time(self):
         """Function calculating the rocket launching time
+
+        Args:
+            In order to calculate the flight time, the following quantities are required:
+            - The air volume (self.air_volume)
+            - The ejection velocity (self.ejection_velocity)
+            - The bottle volume (self.bottle_volume)
+            - The initial water volume (self.initial_water_volume)
+            - The output section (self.output_section)
+            - The initial pressure (self.initial_pressure)
+            - The beta (self.beta)
 
         Returns:
             self.time (list):  Returns the list of elements of time completely filled (initially empty)
         """
-        if len(self.air_volume) == 1 : 
-            self.calc_air_volume()
-        if len(self.ejection_velocity) == 0 : 
-            self.calc_ejection_velocity()
 
-        # First phase
-        for i in range(30) : 
-            self.time.append(((2/3)*self.air_volume[i]**1.5 - (2/3)*(self.bottle_volume-self.initial_water_volume)**1.5)/(self.output_section*np.sqrt(2*self.initial_pressure*(self.bottle_volume-self.initial_water_volume)/self.beta)))
-        # Intermediate phase 1
-        self.time.append((((2/3)*self.air_volume[30]**1.5 - (2/3)*(self.bottle_volume)**1.5)/(self.output_section*np.sqrt(2*self.initial_pressure*(self.bottle_volume-self.initial_water_volume)/self.beta)))+self.time[29])
-        # Second phase
-        for i in range(19) : 
-            self.time.append(self.time[30+i]+((self.air_volume[31+i]-self.air_volume[30+i])/(self.output_section*((self.ejection_velocity[31+i]+self.ejection_velocity[30+i])/2))))
-        # Intermediate phase 2
-        self.time.append(self.time[49])
-        self.time.append(self.time[50]+0.01)
-        # Third phase
-        for i in range(547) :
-            self.time.append(self.time[i + 51]+ 0.05)
+        if len(self.time) == 0 : 
+            if len(self.air_volume) == 1 : 
+                self.calc_air_volume()
+            if len(self.ejection_velocity) == 0 : 
+                self.calc_ejection_velocity()
+
+            # First phase
+            for i in range(30) : 
+                self.time.append(((2/3)*self.air_volume[i]**1.5 - (2/3)*(self.bottle_volume-self.initial_water_volume)**1.5)/(self.output_section*np.sqrt(2*self.initial_pressure*(self.bottle_volume-self.initial_water_volume)/self.beta)))
+            # Intermediate phase 1
+            self.time.append((((2/3)*self.air_volume[30]**1.5 - (2/3)*(self.bottle_volume)**1.5)/(self.output_section*np.sqrt(2*self.initial_pressure*(self.bottle_volume-self.initial_water_volume)/self.beta)))+self.time[29])
+            # Second phase
+            for i in range(19) : 
+                self.time.append(self.time[30+i]+((self.air_volume[31+i]-self.air_volume[30+i])/(self.output_section*((self.ejection_velocity[31+i]+self.ejection_velocity[30+i])/2))))
+            # Intermediate phase 2
+            self.time.append(self.time[49])
+            self.time.append(self.time[50]+0.01)
+            # Third phase
+            for i in range(547) :
+                self.time.append(self.time[i + 51]+ 0.05)
         return self.time
         
     def calc_dust(self) :
         """Function calculating the rocket dust (in water phase and air phase)
 
+        Args:
+            In order to calculate the dust during the flight, the following quantities are required:
+            - The ejection velocity (self.ejection_velocity)
+            - The water density (self.r)
+            - The air density (self.ra)
+            - The output section (self.output_section)
+
         Returns:
             self.dust (list): Returns the list of elements of dust completely filled (initially empty)
         """
-        if len(self.ejection_velocity) == 0 : 
-            self.calc_ejection_velocity()
-        # First phase : water phase
-        for i in range(30) : 
-            self.dust.append(self.r*self.output_section*self.ejection_velocity[i]**2) 
-        # Second phase : air phase
-        for i in range(20) :
-            self.dust.append(self.ra*self.output_section*self.ejection_velocity[30+i]**2)
-        for i in range(549) :
-            self.dust.append(0)
+        if len(self.dust) == 0 : 
+            if len(self.ejection_velocity) == 0 : 
+                self.calc_ejection_velocity()
+            # First phase : water phase
+            for i in range(30) : 
+                self.dust.append(self.r*self.output_section*self.ejection_velocity[i]**2) 
+            # Second phase : air phase
+            for i in range(20) :
+                self.dust.append(self.ra*self.output_section*self.ejection_velocity[30+i]**2)
+            for i in range(549) :
+                self.dust.append(0)
         return self.dust
 
     def calc_mass(self):
         """Function calculating the rocket mass variation during the flight
 
+        Args:
+            In order to calculate the rocket mass during the flight, the following quantities are required:
+            - The air volume (self.air_volume)
+            - The empty rocket mass (self.m_empty_rocket)
+            - The water density (self.r)
+            - The bottle volume (self.bottle_volume)
+        
         Returns:
             self.rocket_mass (list): return the list containing the variation of the rocket mass
         """
-        if len(self.air_volume) == 1 : 
-            self.calc_air_volume()
-        # First phase
-        for i in range(30) :
-            self.rocket_mass.append(self.m_empty_rocket+self.r*(self.bottle_volume-self.air_volume[i]))
-        # Second phase
-        for i in range(569) :
-            self.rocket_mass.append(self.m_empty_rocket)
+        if len(self.rocket_mass) == 0 : 
+            if len(self.air_volume) == 1 : 
+                self.calc_air_volume()
+            # First phase
+            for i in range(30) :
+                self.rocket_mass.append(self.m_empty_rocket+self.r*(self.bottle_volume-self.air_volume[i]))
+            # Second phase
+            for i in range(569) :
+                self.rocket_mass.append(self.m_empty_rocket)
         return self.rocket_mass
+    
+    def calc_tilt_velocity_res(self) :
+        """Function calculating simultaneously the rampe tilt, the rocket velocity and the air resistance 
+
+        Args:
+            In order to calculate the rampe tilt, the rocket velocity and the air resistance during the flight, the following quantities are required:
+            - The flight time (self.time)
+            - The air volume (self.air_volume)
+            - The dust (self.dust)
+            - The acceleration of gravity (self.g)
+            - The water density (self.r)
+            - The air density (self.ra)
+            - The bottle section (self.bottle_section)
+            - The aerodynamic coefficient (self.Cx)
+            - The empty rocket mass (self.m_empty_rocket)
+            - The bottle volume (self.bottle_volume)
+
+        Returns:
+            - self.rampe_tilt (list): returns the list containing the variation of the rampe tilt
+            - self.v_rocket (list): return the list containing the variation of the rocket velocity
+            - self.air_resistance (list): return the list containing the variation of the air resistance
+        """
+        if len(self.rampe_tilt) == 1 and len(self.v_rocket) == 1 and len(self.air_resistance) == 0 :
+            if len(self.time) == 0 :
+                self.calc_time()
+            if len(self.air_volume) == 1 : 
+                self.calc_air_volume()
+            if len(self.dust) == 0 :
+                self.calc_dust()
+            
+            # First phase
+            for i in range(29) :
+                self.rampe_tilt.append(self.rampe_tilt[i]-np.arctan(self.g*np.cos(self.rampe_tilt[i]*np.pi/180)*(self.time[i+1]-self.time[i])/self.v_rocket[i])*180/np.pi)
+
+                self.air_resistance.append(0.5*self.ra*self.bottle_section*self.Cx*(self.v_rocket[i]**2)) 
+            
+                self.v_rocket.append(self.v_rocket[i]+((self.dust[i] - self.air_resistance[i])/(self.m_empty_rocket + self.r*(self.bottle_volume-self.air_volume[i+1])) - self.g*np.sin(self.rampe_tilt[i+1]*np.pi/180))*(self.time[i+1]-self.time[i]))
+            
+            self.air_resistance.append(0.5*self.ra*self.bottle_section*self.Cx*(self.v_rocket[29]**2))
+
+            # Intermediate phase
+            self.rampe_tilt.append(self.rampe_tilt[29]-np.arctan(self.g*np.cos(self.rampe_tilt[29]*np.pi/180)*(self.time[30]-self.time[29])/self.v_rocket[29])*180/np.pi)
+
+            self.v_rocket.append(self.v_rocket[29]+(self.dust[30]/self.m_empty_rocket)*(self.time[30]-self.time[29]))
+
+            self.air_resistance.append(0.5*self.ra*self.bottle_section*self.Cx*(self.v_rocket[30]**2))
+
+            # Second phase
+            for i in range(19) :
+                self.rampe_tilt.append(self.rampe_tilt[i+30]-np.arctan(self.g*np.cos(self.rampe_tilt[i+30]*np.pi/180)*(self.time[i+31]-self.time[i+30])/self.v_rocket[i+30])*180/np.pi)
+
+                self.v_rocket.append(np.abs(self.v_rocket[i+30]+((self.dust[i+31]-self.air_resistance[i+30])/self.m_empty_rocket-self.g*np.sin(self.rampe_tilt[i+31]*np.pi/180))*(self.time[i+31]-self.time[i+30])))
+
+                self.air_resistance.append(0.5*self.ra*self.bottle_section*self.Cx*(self.v_rocket[i+31]**2))
+            
+            # Third phase
+            for i in range(549) :
+                if self.v_rocket[-2] < self.v_rocket[-1] :
+                    self.rampe_tilt.append(-np.abs(self.rampe_tilt[-1]-np.arctan((self.g*np.cos(self.rampe_tilt[-1]*np.pi/180)*(self.time[49+i]-self.time[48+i]))/self.v_rocket[-1])*180/np.pi))
+                else :
+                    self.rampe_tilt.append(self.rampe_tilt[-1]-np.arctan((self.g*np.cos(self.rampe_tilt[-1]*np.pi/180)*(self.time[49+i]-self.time[48+i]))/self.v_rocket[-1])*180/np.pi)
+            
+                self.v_rocket.append(np.abs(self.v_rocket[-1]+((self.dust[49+i]-self.air_resistance[48+i])/self.m_empty_rocket -self.g*np.sin(self.rampe_tilt[-1]*np.pi/180))*(self.time[49+i]-self.time[48+i])))
+
+                self.air_resistance.append(0.5*self.ra*self.bottle_section*self.Cx*(self.v_rocket[-1]**2))
+            
+        return self.rampe_tilt,self.v_rocket,self.air_resistance
