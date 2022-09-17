@@ -23,8 +23,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 # TODO : ajouter éventuellement la masse volumique du liquide en entrée pour évaluer l'utilisation d'autres liquide que l'eau
 # TODO : Ajouter fonction d'affichage de la vitesse de sortie et du beta
 # TODO : Pour l'affichage de la vitesse de sortie de vitesse ajouter la fonctionnalité en m/s en km/h ou en G
-# TODO : Revoir la structure des fonctions pour éviter les dépendances circulaires et les erreurs d'index (peut être n'avoir qu'une seule et même fonction qui calcule toutes les variables)
-# TODO : ajouter une doc pour toutes les fonctions et ajouter des variables d'entrées plus expressive (a : int) 
+# TODO : Revoir le rapport PDF pour ajouter une partie entière sur la théorie et ajouter une page de garde avec un logo, le nom de l'auteur, la date et un code pour le vol
 
 
 class WaterRocket : 
@@ -436,8 +435,12 @@ class WaterRocket :
             self.rocket_data.to_csv("Rocket_data.csv",index=False)
         return self.rocket_data
     
-    def graphic_trajectory_with_highlights(self, save_fig=False) : 
-        
+    def graphic_trajectory_with_highlights(self, save_fig:bool=False) : 
+        """Function that shows the flight path plot of the water rocket with all highlights
+
+        Args:
+            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+        """
         data = self.create_df(save_as_CSV=False)
 
         plt.figure(figsize=(16,6))
@@ -464,8 +467,12 @@ class WaterRocket :
             plt.savefig("./img/flight_path.png",bbox_inches='tight')
         plt.show()
     
-    def graphic_decomposed_trajectory(self, save_fig=False) :
+    def graphic_decomposed_trajectory(self, save_fig:bool=False) :
+        """Function that shows the decomposed flight path plot of the water rocket (water phase, air phase and residual phase)
 
+        Args:
+            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+        """
         data = self.create_df(save_as_CSV=False)
 
         plt.figure(figsize=(16,6))
@@ -488,8 +495,12 @@ class WaterRocket :
             plt.savefig("./img/decomposed_flight_path.png",bbox_inches='tight')
         plt.show()
 
-    def graphic_velocity_x(self, save_fig=False) :
+    def graphic_velocity_x(self, save_fig:bool=False) :
+        """Function that generates the variation of rocket velocity depending of x
 
+        Args:
+            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+        """
         data = self.create_df(save_as_CSV=False)
 
         plt.figure(figsize=(16,6))
@@ -514,8 +525,12 @@ class WaterRocket :
             plt.savefig("./img/velocity_x.png", bbox_inches='tight')
         plt.show()
 
-    def graphic_velocity_t(self, save_fig=False) :
+    def graphic_velocity_t(self, save_fig:bool=False) :
+        """Function that generates the variation of rocket velocity depending of time
 
+        Args:
+            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+        """
         data = self.create_df(save_as_CSV=False)
 
         plt.figure(figsize=(16,6))
@@ -540,8 +555,12 @@ class WaterRocket :
             plt.savefig("./img/velocity_t.png", bbox_inches='tight')
         plt.show()
     
-    def graphic_dust(self, save_fig=False) :
+    def graphic_dust(self, save_fig:bool=False) :
+        """Function that shows the variation the rocket dust
 
+        Args:
+            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+        """
         data = self.create_df(save_as_CSV=False)
         plt.figure(figsize=(16,6))
         font = {'family': 'sans-serif',
@@ -562,8 +581,12 @@ class WaterRocket :
             plt.savefig("./img/dust.png", bbox_inches='tight')
         plt.show()
     
-    def graphic_decomposed_dust(self, save_fig=False) :
+    def graphic_decomposed_dust(self, save_fig:bool=False) :
+        """Function that shows the variation the rocket dust with highlighting the two phase (water and air)
 
+        Args:
+            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+        """
         data = self.create_df(save_as_CSV=False)
         plt.figure(figsize=(16,6))
         font = {'family': 'sans-serif',
@@ -585,8 +608,12 @@ class WaterRocket :
             plt.savefig("./img/decomposed_dust.png", bbox_inches='tight')
         plt.show()
     
-    def graphic_ejection_water(self,save_fig=False) :
-        
+    def graphic_ejection_water(self,save_fig:bool=False) :
+        """Function that shows the variation of the water ejection during the flight
+
+        Args:
+            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+        """
         data = self.create_df(save_as_CSV=False)
         plt.figure(figsize=(16,6))
         font = {'family': 'sans-serif',
@@ -604,8 +631,12 @@ class WaterRocket :
             plt.savefig("./img/water_ejection.png", bbox_inches='tight')
         plt.show()
     
-    def graphic_ejection_air(self,save_fig=False) :
-        
+    def graphic_ejection_air(self,save_fig:bool=False) :
+        """Function that shows the variation of the air ejection during the flight
+
+        Args:
+            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+        """
         data = self.create_df(save_as_CSV=False)
         plt.figure(figsize=(16,6))
         font = {'family': 'sans-serif',
@@ -624,8 +655,12 @@ class WaterRocket :
             plt.savefig("./img/air_ejection.png", bbox_inches='tight')
         plt.show()
     
-    def graphic_highlight_table(self, save_fig=False) : 
+    def graphic_highlight_table(self, save_fig:bool=False) : 
+        """Function that shows table with all flight highlights
 
+        Args:
+            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+        """
         data_rocket = self.create_df(save_as_CSV=False)
         font = {'family': 'sans-serif',
             'color':  'black',
@@ -635,16 +670,16 @@ class WaterRocket :
         
         data =  [
             [         'Values'],
-            [ 'Maximal speed (m/s)', data["Rocket velocity"].max()],
-            [ 'Maximal speed (km/h)', data["Rocket velocity"].max()*3.6],
-            ['Maximal dust (N)', data["Dust"].max()],
-            ['Maximal acceleration (m/s²)', data["Acceleration"].max()],
+            [ 'Maximal speed (m/s)', data_rocket["Rocket velocity"].max()],
+            [ 'Maximal speed (km/h)', data_rocket["Rocket velocity"].max()*3.6],
+            ['Maximal dust (N)', data_rocket["Dust"].max()],
+            ['Maximal acceleration (m/s²)', data_rocket["Acceleration"].max()],
             ["Maximal air resistance (N)", data["Air resistance"].max()],
-            ['Apogee (m)', data["y"].max()],
-            ['Maximum extent (m)', data["x"].max()],
-            ["Duration of water ejection (s)", data["Time"].loc[29]],
-            ["Duration of air ejection (s)", data["Time"].loc[49]-data["Time"].loc[29]],
-            ["Total flight time (s)", data["Time"].loc[206]]
+            ['Apogee (m)', data_rocket["y"].max()],
+            ['Maximum extent (m)', data_rocket["x"].max()],
+            ["Duration of water ejection (s)", data_rocket["Time"].loc[29]],
+            ["Duration of air ejection (s)", data_rocket["Time"].loc[49]-data_rocket["Time"].loc[29]],
+            ["Total flight time (s)", data_rocket["Time"].loc[206]]
         ]
 
         column_headers = data.pop(0)
@@ -680,3 +715,106 @@ class WaterRocket :
                 os.mkdir("./img")
             plt.savefig("./img/table_highlights.png", bbox_inches='tight', dpi=150)
         plt.show()
+    
+    def graphic_all(self, save_fig:bool=False) :
+        """Function that generates all figures
+
+        Args:
+            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+        """
+        self.graphic_trajectory_with_highlights(save_fig=save_fig)
+        self.graphic_decomposed_trajectory(save_fig=save_fig)
+        self.graphic_velocity_x(save_fig=save_fig)
+        self.graphic_velocity_t(save_fig=save_fig)
+        self.graphic_dust(save_fig=save_fig)
+        self.graphic_decomposed_dust(save_fig=save_fig)
+        self.graphic_ejection_water(save_fig=save_fig)
+        self.graphic_ejection_air(save_fig=save_fig)
+        self.graphic_highlight_table(save_fig=save_fig)
+
+    # PDF Generation
+    def create_style(styleName, 
+                    fontName:str='Helvetica', 
+                    fontSize:int=12, 
+                    parent:str='Normal', 
+                    alignment:str='right', 
+                    spaceAfter:int=10) :
+        """Function that create style for the PDF content (not usable)
+
+        Args:
+            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+        """
+        alignement_dict = {"left" : 0, "center" : 1, "right" : 2}
+        style = getSampleStyleSheet()
+        return ParagraphStyle(styleName,
+                            fontName=fontName,
+                            fontSize=fontSize,
+                            parent=style[parent],
+                            alignment=alignement_dict[alignment],
+                            spaceAfter=spaceAfter)
+    
+    def createPDF(self, path_to_save_pdf:str="report.pdf", saveImgs:bool=False, author:str="No one"):
+        """Function that generate a flight report and can be saved as PDF file
+
+        Args:
+            - path_to_save_pdf (str, optional): The relative of full path for saving the report as pdf. Defaults to "report.pdf"
+            - saveImgs (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+            - author (str, optional): The author name to add in the report
+        """
+        myTitle = self.create_style('myheading', fontName='Helvetica-Bold', fontSize=32, parent='Heading1', alignment='center',spaceAfter=24)
+        mySubtitle = self.create_style('mysubheading', fontName='Helvetica-Bold', fontSize=20, parent='Heading2', alignment='left',spaceAfter=16)
+        mySubSubtitle = self.create_style('mysubsubheading', fontName='Helvetica-Bold', fontSize=14, parent='Heading3', alignment='left',spaceAfter=12)
+        myPara = self.create_style('mypara', fontName='Helvetica', fontSize=12, parent='Normal', alignment='left',spaceAfter=10)
+
+        ## Template
+        # Generate data
+        data = self.create_df(save_as_CSV=False)
+        # Generate images
+        self.graphic_all(save_fig=True)
+        # Generate PDF
+        doc = SimpleDocTemplate(
+            path_to_save_pdf,
+            pagesize=A4,
+            rightMargin=62, leftMargin=62,
+            topMargin=72, bottomMargin=34,
+            title="Report",author=author
+            )
+        flowable = list()
+        reportName = Paragraph("<u>Flight report</u>", myTitle)
+        spacer = Spacer(1, 0.25*inch)
+        spacer_item = Spacer(1, 0.125*inch)
+        moment = Paragraph("Highlights", mySubtitle)
+        monimage = Image("./img/table_highlights.png", width=350, height=200)
+        commentary = Paragraph("Commentaires", mySubtitle)
+
+        item1 = Paragraph("The maximum speed is <b>{:3.4f} m/s</b> and corresponds to the coordinates :<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;x = {:3.4f} m<br />&nbsp;&nbsp;&nbsp;&nbsp;y = {:3.4f} m</b>".format(data["Rocket velocity"].max(),data["x"].loc[data["Rocket velocity"].argmax()],data["y"].loc[data["Rocket velocity"].argmax()]), style=myPara, bulletText='-')
+
+        item2 = Paragraph("The maximum thrust is <b>{:3.4f}  N</b> and corresponds to the take-offs :<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;x = {:3.4f} m<br />&nbsp;&nbsp;&nbsp;&nbsp;y = {:3.4f} m</b>".format(data["Dust"].max(),data["x"].loc[data["Dust"].argmax()],data["y"].loc[data["Poussée"].argmax()]), style=myPara, bulletText='-')
+
+        item3 = Paragraph("The maximum acceleration is <b>{:3.4f} m/s² </b> and corresponds to the coordinates :<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;x = {:3.4f} m<br />&nbsp;&nbsp;&nbsp;&nbsp;y = {:3.4f} m</b>".format(data["Acceleration"].max(),data["x"].loc[data["Acceleration"].argmax()],data["y"].loc[data["Acceleration"].argmax()]), style=myPara, bulletText='-')
+
+        item4 = Paragraph("The coordinates of the end of the water ejection :<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;x = {:3.4f} m<br />&nbsp;&nbsp;&nbsp;&nbsp;y = {:3.4f} m</b>".format(data["x"].loc[29],data["y"].loc[29]), style=myPara, bulletText='-')
+
+        item5 = Paragraph("The coordinates of the end of the air ejection :<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;x = {:3.4f} m<br />&nbsp;&nbsp;&nbsp;&nbsp;y = {:3.4f} m</b>".format(data["x"].loc[49],data["y"].loc[49]), style=myPara, bulletText='-')
+
+        item6 = Paragraph("The coordinates of the apogee are :<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;x = {:3.4f} m<br />&nbsp;&nbsp;&nbsp;&nbsp;y = {:3.4f} m</b>".format(data["x"].loc[data["y"].argmax()],data["y"].loc[data["y"].argmax()]), style=myPara, bulletText='-')
+
+        mesgraphiques = Paragraph("Graphics",mySubtitle)
+        graphique1 = Paragraph("<u>Flight path :</u>",mySubSubtitle)
+        fig1 = Image("./img/flight_path.png", width=500, height=200)
+        fig2 = Image("./img/decomposed_flight_path.png", width=500, height=200)
+        graphique2 = Paragraph("<u>Speed evolution :</u>",mySubSubtitle)
+        fig3 = Image("./img/velocity_x.png", width=500, height=200)
+        fig4 = Image("./img/velocity_t.png", width=500, height=200)
+        graphique3 = Paragraph("<u>Thrust evolution :</u>",mySubSubtitle)
+        #fig5 = Image("./img/dust.png", width=500, height=200)
+        fig6 = Image("./img/decomposed_dust.png", width=500, height=200)
+        graphique4 = Paragraph("<u>Ejection speed :</u>",mySubSubtitle)
+        fig7 = Image("./img/water_ejection.png", width=500, height=200)
+        fig8 = Image("./img/air_ejection.png", width=500, height=200)
+
+        flowable += [reportName, spacer, moment, monimage, commentary, spacer, item1, spacer_item, item2, spacer_item, item3, spacer_item, item4, spacer_item, item5, spacer_item, item6, spacer, mesgraphiques, spacer_item, graphique1,spacer_item, fig1,spacer_item, fig2, spacer_item, graphique2, spacer_item, fig3, fig4, spacer_item, graphique3, spacer_item, fig6, spacer_item, graphique4, spacer_item, fig7, fig8]
+
+        doc.build(flowable)
+        if not saveImgs : 
+            shutil.rmtree('./img')
