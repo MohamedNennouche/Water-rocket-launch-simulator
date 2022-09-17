@@ -28,32 +28,6 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 # TODO : Revoir la structure des fonctions pour éviter les dépendances circulaires et les erreurs d'index (peut être n'avoir qu'une seule et même fonction qui calcule toutes les variables)
 # TODO : ajouter une doc pour toutes les fonctions et ajouter des variables d'entrées plus expressive (a : int) 
 
-# Vb = bottle_volume
-# Diametre_bouteille = d_bottle
-# Diametre_sortie = d_out
-# Masse_fusee_vide = m_empty_rocket
-# Cx = Cx
-# a = tilt_angle
-# lr = length_rampe
-# Po = initial_pressure
-# Veo = initial_water_volume
-# Section_bouteille = bottle_section
-# Section_goulot = output_section
-
-# Variables calculées
-# volumes_air = air_volume
-# pression_air = air_pressure
-# vitesse = ejection_velocity
-# temps = time
-# poussée = dust
-# masse_fusee = rocket_mass
-# inclinaison_rampe = rampe_tilt
-# vitesse_fusee = v_rocket
-# resistance_air = air_resistance
-# x = x
-# y = y 
-# acceleration = acceletation_y
-
 
 class WaterRocket : 
     
@@ -109,7 +83,7 @@ class WaterRocket :
 
         ## Calculation of the ramp output speed
         # Acceleration according to x
-        self.ax = (initial_pressure*d_output-(m_empty_rocket+1000*initial_water_volume)*g*np.cos((90-tilt_angle)*np.pi/180))/(m_empty_rocket+1000*initial_water_volume)
+        self.ax = (self.initial_pressure*self.output_section-(self.m_empty_rocket+1000*self.initial_water_volume)*g*np.cos((90-tilt_angle)*np.pi/180))/(m_empty_rocket+1000*self.initial_water_volume)
         # Calculation of the ramp exit time with the acceleration x
         self.t_ramp_output = np.sqrt(2*length_rampe/self.ax)
         # Calculation of the velocity
@@ -134,6 +108,9 @@ class WaterRocket :
         self.y = [0]
         self.acceleration_y = [0]
 
+        # Pandas dataframe
+        self.rocket_data = pd.DataFrame()
+
     def calc_air_volume(self) :
         """Function calculating the air volume variations in the cylinder from its launch
 
@@ -153,6 +130,9 @@ class WaterRocket :
             for i in range(28) :
                 self.air_volume.append(self.air_volume[i] + (self.bottle_volume-self.air_volume[0])/29)
             self.air_volume+[self.bottle_volume,self.bottle_volume]
+            # Intermediate phase
+            self.air_volume.append(self.bottle_volume)
+            self.air_volume.append(self.bottle_volume)
             # Second phase
             for i in range(30,48) :
                 self.air_volume.append(self.air_volume[i] + (final_air_volume-self.air_volume[30])/19)
@@ -423,7 +403,7 @@ class WaterRocket :
         if len(self.air_volume) == 1 :
             self.calc_air_volume()
         if len(self.air_pressure) == 0 :
-            self.calc_pressur()
+            self.calc_pressure()
         if len(self.ejection_velocity) == 0 : 
             self.calc_ejection_velocity()
         if len(self.time) == 0 : 
@@ -440,3 +420,26 @@ class WaterRocket :
             self.calc_accel()
         
         return self.air_volume, self.air_pressure, self.ejection_velocity, self.time, self.dust, self.rocket_mass, self.rampe_tilt, self.v_rocket, self.air_resistance, self.x, self.y, self.acceleration_y
+    
+    def create_df(self, save_as_CSV:bool=True) :
+        """Function calculating all caracteristics of the rocket flight and create Pandas DataFrame
+
+        Returns: 
+        - self.rocket_data (Dataframe): Pandas Dataframe containing all caracteristics of the flight
+        """
+        self.calc_all_caracteristics()
+
+        data = np.array([self.air_volume, self.air_pressure, self.time, self.ejection_velocity, self.dust, self.rocket_mass, self.rampe_tilt, self.v_rocket, self.air_resistance, self.x, self.y, self.acceleration_y]).T
+        
+        columns = ["Air volume","Air pressure","Time","Ejection velocity","Dust","Rocket mass","Tilt","Rocket velocity","Air resistance","x","y","Acceleration"]
+
+        self.rocket_data = pd.DataFrame(data, columns=columns)
+
+        # Mask 
+
+        self.rocket_data = self.rocket_data[self.rocket_data["y"]>=0]
+
+        if save_as_CSV :
+            self.rocket_data.to_csv("Rocket_data.csv",index=False)
+        
+        return self.rocket_data
