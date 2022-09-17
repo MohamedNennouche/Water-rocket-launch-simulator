@@ -19,8 +19,6 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 # TODO : réfléchir sur la possibilité de mettre 2 fichiers séparés : calcul pour la fusée / graphiques et la génération des PDF 
 # TODO : Mettre des fonctions pour l'affichage de chaque grandeur
 # TODO : Fonction qui affiche tout
-# TODO : Définir des noms cohérents aux variables 
-# TODO : Voir comment générer automatiquement les commentaires pour définir les fonctions
 # TODO : Ajouter un module de simulation par rapport à une des variables d'entrée pour évaluer son changement et son impact sur l'apogée
 # TODO : ajouter éventuellement la masse volumique du liquide en entrée pour évaluer l'utilisation d'autres liquide que l'eau
 # TODO : Ajouter fonction d'affichage de la vitesse de sortie et du beta
@@ -442,7 +440,7 @@ class WaterRocket :
         
         data = self.create_df(save_as_CSV=False)
 
-        plt.figure(figsize=(15,6))
+        plt.figure(figsize=(16,6))
         plt.plot(data["x"],data["y"], label="Flight path")
         plt.scatter(data["x"].loc[data["y"].argmax()],data["y"].loc[data["y"].argmax()], label='Apogee', marker="x", s=90, color=(0.25,0.25,0.5))
         plt.scatter(data["x"].loc[data["Rocket velocity"].argmax()],data["y"].loc[data["Rocket velocity"].argmax()], label='Max velocity', marker="+", s=90, color=(0.1,0.5,0.1))
@@ -470,7 +468,7 @@ class WaterRocket :
 
         data = self.create_df(save_as_CSV=False)
 
-        plt.figure(figsize=(15,6))
+        plt.figure(figsize=(16,6))
         font = {'family': 'sans-serif',
             'color':  'black',
             'weight': 'bold',
@@ -494,7 +492,7 @@ class WaterRocket :
 
         data = self.create_df(save_as_CSV=False)
 
-        plt.figure(figsize=(17,6))
+        plt.figure(figsize=(16,6))
         font = {'family': 'sans-serif',
             'color':  'black',
             'weight': 'bold',
@@ -516,3 +514,169 @@ class WaterRocket :
             plt.savefig("./img/velocity_x.png", bbox_inches='tight')
         plt.show()
 
+    def graphic_velocity_t(self, save_fig=False) :
+
+        data = self.create_df(save_as_CSV=False)
+
+        plt.figure(figsize=(16,6))
+        font = {'family': 'sans-serif',
+            'color':  'black',
+            'weight': 'bold',
+            'size': 16,
+            }
+        plt.plot(data["Time"],data["Rocket velocity"], label="Flight speed evolution")
+        plt.scatter(data["Time"].loc[119],data["Rocket velocity"].loc[119], marker="+", label="Apogee", c="r", s=150)
+        x_cast = "{:.2f}".format(data["x"].loc[data["y"].argmax()])
+        y_cast = "{:.2f}".format(data["y"].loc[data["y"].argmax()])
+        plt.text(data["Time"].loc[119]+0.5,data["Rocket velocity"].loc[119], "x = {}\ny = {}".format(x_cast,y_cast))
+        plt.legend()
+        plt.title("Speed of the rocket as a function of time", fontdict=font)
+        plt.xlabel("Time (s)",fontsize=14)
+        plt.ylabel("Speed (m/s)", fontsize=14)
+        
+        if save_fig :
+            if not os.path.isdir("./img") :
+                os.mkdir("./img")
+            plt.savefig("./img/velocity_t.png", bbox_inches='tight')
+        plt.show()
+    
+    def graphic_dust(self, save_fig=False) :
+
+        data = self.create_df(save_as_CSV=False)
+        plt.figure(figsize=(16,6))
+        font = {'family': 'sans-serif',
+            'color':  'black',
+            'weight': 'bold',
+            'size': 16,
+            }
+        
+        plt.plot(data["Time"],data["Dust"], marker = 'x', label="Dust")
+        plt.title("Dust evolution as a function of time", fontdict=font)
+        plt.xlabel("Time (s)",fontsize=14)
+        plt.ylabel("Dust (N)", fontsize=14)
+        plt.legend(fontsize=14)
+        plt.xlim(0,1.3)
+        if save_fig :
+            if not os.path.isdir("./img") :
+                os.mkdir("./img")
+            plt.savefig("./img/dust.png", bbox_inches='tight')
+        plt.show()
+    
+    def graphic_decomposed_dust(self, save_fig=False) :
+
+        data = self.create_df(save_as_CSV=False)
+        plt.figure(figsize=(16,6))
+        font = {'family': 'sans-serif',
+            'color':  'black',
+            'weight': 'bold',
+            'size': 16,
+            }
+
+        plt.plot(data["Time"].iloc[:30],data["Dust"].iloc[:30], marker = 'x', label="Water dust")
+        plt.plot(data["Time"].iloc[30:],data["Dust"].iloc[30:], marker = 'x', label="Air dust")
+        plt.title("Evolution of the dust as function of time", fontdict=font)
+        plt.xlabel("Time (s)",fontsize=14)
+        plt.ylabel("Dust (N)", fontsize=14)
+        plt.legend(fontsize=14)
+        plt.xlim(0,1.3)
+        if save_fig :
+            if not os.path.isdir("./img") :
+                os.mkdir("./img")
+            plt.savefig("./img/decomposed_dust.png", bbox_inches='tight')
+        plt.show()
+    
+    def graphic_ejection_water(self,save_fig=False) :
+        
+        data = self.create_df(save_as_CSV=False)
+        plt.figure(figsize=(16,6))
+        font = {'family': 'sans-serif',
+            'color':  'black',
+            'weight': 'bold',
+            'size': 16,
+            }
+        plt.plot(data["Time"].iloc[:30], data["Ejection velocity"].iloc[:30],marker='x')
+        plt.title("Evolution of the water ejection velocity", fontdict=font)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.ylabel("Ejection velocity (m/s)", fontsize=14)
+        if save_fig :
+            if not os.path.isdir("./img") :
+                os.mkdir("./img")
+            plt.savefig("./img/water_ejection.png", bbox_inches='tight')
+        plt.show()
+    
+    def graphic_ejection_air(self,save_fig=False) :
+        
+        data = self.create_df(save_as_CSV=False)
+        plt.figure(figsize=(16,6))
+        font = {'family': 'sans-serif',
+            'color':  'black',
+            'weight': 'bold',
+            'size': 16,
+            }
+        plt.plot(data["Time"].iloc[30:], data["Ejection velocity"].iloc[30:],marker='x')
+        plt.xlim(0.25,1.5)
+        plt.title("Evolution of the air ejection velocity", fontdict=font)
+        plt.xlabel("Time (s)", fontsize=14)
+        plt.ylabel("Ejection velocity (m/s)", fontsize=14)
+        if save_fig :
+            if not os.path.isdir("./img") :
+                os.mkdir("./img")
+            plt.savefig("./img/air_ejection.png", bbox_inches='tight')
+        plt.show()
+    
+    def graphic_highlight_table(self, save_fig=False) : 
+
+        data_rocket = self.create_df(save_as_CSV=False)
+        font = {'family': 'sans-serif',
+            'color':  'black',
+            'weight': 'bold',
+            'size': 16,
+            }
+        
+        data =  [
+            [         'Values'],
+            [ 'Maximal speed (m/s)', data["Rocket velocity"].max()],
+            [ 'Maximal speed (km/h)', data["Rocket velocity"].max()*3.6],
+            ['Maximal dust (N)', data["Dust"].max()],
+            ['Maximal acceleration (m/s²)', data["Acceleration"].max()],
+            ["Maximal air resistance (N)", data["Air resistance"].max()],
+            ['Apogee (m)', data["y"].max()],
+            ['Maximum extent (m)', data["x"].max()],
+            ["Duration of water ejection (s)", data["Time"].loc[29]],
+            ["Duration of air ejection (s)", data["Time"].loc[49]-data["Time"].loc[29]],
+            ["Total flight time (s)", data["Time"].loc[206]]
+        ]
+
+        column_headers = data.pop(0)
+        row_headers = [x.pop(0) for x in data]
+
+        cell_text = []
+        for row in data:
+            cell_text.append([f'{x:3.4f}' for x in row])
+
+        rcolors = plt.cm.BuPu(np.full(len(row_headers), 0.1))
+        ccolors = plt.cm.BuPu(np.full(len(column_headers), 0.1))
+
+        plt.figure()
+        the_table = plt.table(cellText=cell_text,
+                        rowLabels=row_headers,
+                        rowColours=rcolors,
+                        cellLoc='center',
+                        rowLoc='right',
+                        colLoc='center',
+                        colColours=ccolors,
+                        colLabels=column_headers,
+                        loc='center')
+        the_table.scale(1, 1.5)
+        plt.box(on=None)
+
+        ax = plt.gca()
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
+        fig = plt.gcf()
+        if save_fig :
+            if not os.path.isdir("./img") :
+                os.mkdir("./img")
+            plt.savefig("./img/table_highlights.png", bbox_inches='tight', dpi=150)
+        plt.show()
