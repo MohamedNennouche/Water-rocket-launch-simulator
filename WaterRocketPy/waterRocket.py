@@ -130,8 +130,8 @@ class WaterRocket :
         self.rampe_tilt = [tilt_angle]
         self.v_rocket = [self.v_ramp_output]
         self.air_resistance = list()
-        self.x = list()
-        self.y = list()
+        self.x = [0]
+        self.y = [0]
         self.acceleration_y = [0]
 
     def calc_air_volume(self) :
@@ -366,3 +366,77 @@ class WaterRocket :
                 self.air_resistance.append(0.5*self.ra*self.bottle_section*self.Cx*(self.v_rocket[-1]**2))
             
         return self.rampe_tilt,self.v_rocket,self.air_resistance
+
+    def calc_x_y(self) :
+        """Function calculating simultaneously the x and y position of the rocket
+
+        Args:
+            In order to calculate the x and y position of the rocket, the following quantities are required:
+            - The rocket velocity (self.v_rocket)
+            - The rampe tilt (self.rampe_tilt)
+            - The time of the flight (self.time)
+
+        Returns:
+            - self.x (list): returns the list containing the x position of the rocket
+            - self.y (list): return the list containing the y position of the rocket
+        """
+
+        if len(self.x) == 1 and len(self.y) == 1 :
+            if len(self.v_rocket) == 1 and len(self.rampe_tilt) == 1 :
+                self.calc_tilt_velocity_res()
+            if len(self.time) == 0 :
+                self.calc_time()
+            
+            for i in range(1,599) :
+                self.x.append(self.x[i-1]+self.v_rocket[i]*(self.time[i]-self.time[i-1])*np.cos(self.rampe_tilt[i]*np.pi/180))
+                self.y.append(self.y[i-1]+self.v_rocket[i]*(self.time[i]-self.time[i-1])*np.sin(self.rampe_tilt[i]*np.pi/180))
+        return self.x,self.y
+    
+    def calc_accel(self) :
+        """Function calculating the rocket acceleration (following y)
+
+        Args:
+            In order to calculate the rocket acceleration, the following quantities are required:
+            - The rocket velocity (self.v_rocket)
+            - The time of the flight (self.time)
+
+        Returns:
+            - self.acceleration_y (list): returns the list containing the rocket acceleration following the y axis
+        """
+        if len(self.acceleration_y) == 1 :
+            if len(self.v_rocket) == 1 :
+                self.calc_tilt_velocity_res()
+            if len(self.time) == 0 :
+                self.calc_time()
+            for i in range(1,599) :
+                if i ==30 or i == 50 : 
+                    self.acceleration_y.append(self.acceleration_y[-1]) # mettre un doublon à la frontière
+                else : 
+                    self.acceleration_y.append((self.v_rocket[i]-self.v_rocket[i-1])/(self.time[i]-self.time[i-1]))
+        return self.acceleration_y
+    
+    def calc_all_caracteristics(self) :
+        """Function calculating all caracteristics of the rocket flight
+
+        Returns: self.air_volume, self.air_pressure, self.ejection_velocity, self.time, self.dust, self.rocket_mass, self.rampe_tilt, self.v_rocket, self.air_resistance, self.x, self.y, self.acceleration_y
+        """
+        if len(self.air_volume) == 1 :
+            self.calc_air_volume()
+        if len(self.air_pressure) == 0 :
+            self.calc_pressur()
+        if len(self.ejection_velocity) == 0 : 
+            self.calc_ejection_velocity()
+        if len(self.time) == 0 : 
+            self.calc_time()
+        if len(self.dust) == 0 : 
+            self.calc_dust()
+        if len(self.rocket_mass) == 0 : 
+            self.calc_mass()
+        if len(self.rampe_tilt) == 1 and len(self.v_rocket) == 1 and len(self.air_resistance) == 0 :
+            self.calc_tilt_velocity_res()
+        if len(self.x) == 1 and len(self.y) == 1 :
+            self.calc_x_y()
+        if len(self.acceleration_y) == 1 :
+            self.calc_accel()
+        
+        return self.air_volume, self.air_pressure, self.ejection_velocity, self.time, self.dust, self.rocket_mass, self.rampe_tilt, self.v_rocket, self.air_resistance, self.x, self.y, self.acceleration_y
