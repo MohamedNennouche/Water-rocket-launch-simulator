@@ -26,6 +26,26 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 # TODO : Revoir le rapport PDF pour ajouter une partie entière sur la théorie et ajouter une page de garde avec un logo, le nom de l'auteur, la date et un code pour le vol
 
 
+def create_style(styleName, 
+                    fontName:str='Helvetica', 
+                    fontSize:int=12, 
+                    parent:str='Normal', 
+                    alignment:str='right', 
+                    spaceAfter:int=10) :
+    """Function that create style for the PDF content (not usable)
+
+    Args:
+        save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
+    """
+    alignement_dict = {"left" : 0, "center" : 1, "right" : 2}
+    style = getSampleStyleSheet()
+    return ParagraphStyle(styleName,
+                            fontName=fontName,
+                            fontSize=fontSize,
+                            parent=style[parent],
+                            alignment=alignement_dict[alignment],
+                            spaceAfter=spaceAfter)
+
 class WaterRocket : 
     
     def __init__(
@@ -674,7 +694,7 @@ class WaterRocket :
             [ 'Maximal speed (km/h)', data_rocket["Rocket velocity"].max()*3.6],
             ['Maximal dust (N)', data_rocket["Dust"].max()],
             ['Maximal acceleration (m/s²)', data_rocket["Acceleration"].max()],
-            ["Maximal air resistance (N)", data["Air resistance"].max()],
+            ["Maximal air resistance (N)", data_rocket["Air resistance"].max()],
             ['Apogee (m)', data_rocket["y"].max()],
             ['Maximum extent (m)', data_rocket["x"].max()],
             ["Duration of water ejection (s)", data_rocket["Time"].loc[29]],
@@ -733,25 +753,6 @@ class WaterRocket :
         self.graphic_highlight_table(save_fig=save_fig)
 
     # PDF Generation
-    def create_style(styleName, 
-                    fontName:str='Helvetica', 
-                    fontSize:int=12, 
-                    parent:str='Normal', 
-                    alignment:str='right', 
-                    spaceAfter:int=10) :
-        """Function that create style for the PDF content (not usable)
-
-        Args:
-            save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
-        """
-        alignement_dict = {"left" : 0, "center" : 1, "right" : 2}
-        style = getSampleStyleSheet()
-        return ParagraphStyle(styleName,
-                            fontName=fontName,
-                            fontSize=fontSize,
-                            parent=style[parent],
-                            alignment=alignement_dict[alignment],
-                            spaceAfter=spaceAfter)
     
     def createPDF(self, path_to_save_pdf:str="report.pdf", saveImgs:bool=False, author:str="No one"):
         """Function that generate a flight report and can be saved as PDF file
@@ -764,10 +765,10 @@ class WaterRocket :
         Returns : 
         - The function returns a PDF report with all graphics and commentary
         """
-        myTitle = self.create_style('myheading', fontName='Helvetica-Bold', fontSize=32, parent='Heading1', alignment='center',spaceAfter=24)
-        mySubtitle = self.create_style('mysubheading', fontName='Helvetica-Bold', fontSize=20, parent='Heading2', alignment='left',spaceAfter=16)
-        mySubSubtitle = self.create_style('mysubsubheading', fontName='Helvetica-Bold', fontSize=14, parent='Heading3', alignment='left',spaceAfter=12)
-        myPara = self.create_style('mypara', fontName='Helvetica', fontSize=12, parent='Normal', alignment='left',spaceAfter=10)
+        myTitle = create_style('myheading', fontName='Helvetica-Bold', fontSize=32, parent='Heading1', alignment='center',spaceAfter=24)
+        mySubtitle = create_style('mysubheading', fontName='Helvetica-Bold', fontSize=20, parent='Heading2', alignment='left',spaceAfter=16)
+        mySubSubtitle = create_style('mysubsubheading', fontName='Helvetica-Bold', fontSize=14, parent='Heading3', alignment='left',spaceAfter=12)
+        myPara = create_style('mypara', fontName='Helvetica', fontSize=12, parent='Normal', alignment='left',spaceAfter=10)
 
         ## Template
         # Generate data
@@ -792,7 +793,7 @@ class WaterRocket :
 
         item1 = Paragraph("The maximum speed is <b>{:3.4f} m/s</b> and corresponds to the coordinates :<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;x = {:3.4f} m<br />&nbsp;&nbsp;&nbsp;&nbsp;y = {:3.4f} m</b>".format(data["Rocket velocity"].max(),data["x"].loc[data["Rocket velocity"].argmax()],data["y"].loc[data["Rocket velocity"].argmax()]), style=myPara, bulletText='-')
 
-        item2 = Paragraph("The maximum thrust is <b>{:3.4f}  N</b> and corresponds to the take-offs :<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;x = {:3.4f} m<br />&nbsp;&nbsp;&nbsp;&nbsp;y = {:3.4f} m</b>".format(data["Dust"].max(),data["x"].loc[data["Dust"].argmax()],data["y"].loc[data["Poussée"].argmax()]), style=myPara, bulletText='-')
+        item2 = Paragraph("The maximum thrust is <b>{:3.4f}  N</b> and corresponds to the take-offs :<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;x = {:3.4f} m<br />&nbsp;&nbsp;&nbsp;&nbsp;y = {:3.4f} m</b>".format(data["Dust"].max(),data["x"].loc[data["Dust"].argmax()],data["y"].loc[data["Dust"].argmax()]), style=myPara, bulletText='-')
 
         item3 = Paragraph("The maximum acceleration is <b>{:3.4f} m/s² </b> and corresponds to the coordinates :<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;x = {:3.4f} m<br />&nbsp;&nbsp;&nbsp;&nbsp;y = {:3.4f} m</b>".format(data["Acceleration"].max(),data["x"].loc[data["Acceleration"].argmax()],data["y"].loc[data["Acceleration"].argmax()]), style=myPara, bulletText='-')
 
