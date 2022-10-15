@@ -788,7 +788,7 @@ class WaterRocket :
         spacer_item = Spacer(1, 0.125*inch)
         moment = Paragraph("Highlights", mySubtitle)
         monimage = Image("./img/table_highlights.png", width=350, height=200)
-        commentary = Paragraph("Commentaires", mySubtitle)
+        commentary = Paragraph("Comments", mySubtitle)
 
         item1 = Paragraph("The maximum speed is <b>{:3.4f} m/s</b> and corresponds to the coordinates :<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;x = {:3.4f} m<br />&nbsp;&nbsp;&nbsp;&nbsp;y = {:3.4f} m</b>".format(data["Rocket velocity"].max(),data["x"].loc[data["Rocket velocity"].argmax()],data["y"].loc[data["Rocket velocity"].argmax()]), style=myPara, bulletText='-')
 
