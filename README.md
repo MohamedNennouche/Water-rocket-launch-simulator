@@ -1,18 +1,18 @@
-# PyWaterRocket
-PyWaterRocket est un module Python simple d'utilisation et intuitif fait pour la simulation de tir de fusée à eau amateurs à base de bouteille d'eau ou de limonade. Ce module fait suite au projet de conception et d'instrumentation d'une fusée à eau dans le cadre du programme d'échange Erasmus + entre Polytech Paris-Saclay et l'Ecole Nationale Polytechnique. Ce projet a pour inspiration un travail fait précédemment sous forme d'un fichier Excel (le fichier simulateurV1.xls) fait par ... 
-## Principales features
-- Calcul des constantes physiques concernant les tirs de fusées à eau 
-- Prend en considération les paramètres de formes de la bouteilles
-- Calcul des variables suivantes durant le vol : 
-    - Vitesse d'éjection de l'eau et de l'air de la bouteille
-    - La poussée de la fusée
-    - La résistance de l'air
-    - La position x(t) et y(t)
-    - La vitesse de la fusée
-    - L'inclinaison de la fusée
-    - L'accélération de la fusée
-## Validation
-TODO : EN COURS
+# :rocket: WaterRocket
+[![Python](https://img.shields.io/pypi/pyversions/tensorflow.svg?style=plastic)](https://pypi.org/project/WaterRocket/0.1/) [![PyPI](https://badge.fury.io/py/WaterRocket.svg)](https://pypi.org/project/WaterRocket/0.1/)
+WaterRocket is an easy to use and intuitive Python module made for the simulation of amateur water rocket shooting based on water bottles or lemonade. This module follows the project of design and instrumentation of a water rocket in the framework of the Erasmus + exchange program between Polytech Paris-Saclay and Ecole Nationale Polytechnique. This project is inspired by a work done previously in the form of an Excel file (the simulator file V1.xls) made by ...
+## Getting started
+```
+$ pip install WaterRocket
+```
+Then to use all the functions you have to create a WaterRocket object : 
+```python
+from WaterRocket import WaterRocket
+
+myRocket = WaterRocket()
+```
+For a getting started Notebook example click [here](./examples/getting_started.ipynb)
 ## Documentation 
-TODO : Mettre un notebook explicatif des fonctionnalités sur colab
-## Getting Started
+All the documentation about the module methods and components describe [here](documentation.md)
+## Creator and maintainer
+Mohamed Nennouche
