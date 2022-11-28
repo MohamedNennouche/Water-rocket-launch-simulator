@@ -16,12 +16,10 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 
-# TODO : Mettre des fonctions pour l'affichage de chaque grandeur
-# TODO : Fonction qui affiche tout
+from tabulate import tabulate
+
 # TODO : Ajouter un module de simulation par rapport à une des variables d'entrée pour évaluer son changement et son impact sur l'apogée
 # TODO : ajouter éventuellement la masse volumique du liquide en entrée pour évaluer l'utilisation d'autres liquide que l'eau
-# TODO : Ajouter fonction d'affichage de la vitesse de sortie et du beta
-# TODO : Pour l'affichage de la vitesse de sortie de vitesse ajouter la fonctionnalité en m/s en km/h ou en G
 # TODO : Revoir le rapport PDF pour ajouter une partie entière sur la théorie et ajouter une page de garde avec un logo, le nom de l'auteur, la date et un code pour le vol
 
 
@@ -61,7 +59,7 @@ class WaterRocket :
         g:float=9.81,
         r:float=998,
         ra:float=1.2,
-        Patm:float=101325) :
+        Patm:float=101325) -> None :
         """Constructor of the WaterRocket class, it takes as physical parameters of the bottle as well as environmental to initialize all the variables that we can calculate
 
         Args:
@@ -127,7 +125,7 @@ class WaterRocket :
         # Pandas dataframe
         self.rocket_data = pd.DataFrame()
 
-    def calc_air_volume(self) :
+    def calc_air_volume(self) -> list :
         """Function calculating the air volume variations in the cylinder from its launch
 
         Args: 
@@ -158,7 +156,7 @@ class WaterRocket :
                 self.air_volume.append(0)
         return self.air_volume
     
-    def calc_pressure(self):
+    def calc_pressure(self) -> list :
         """Function calculating the relative pressure variation inside the bottle
 
         Args: 
@@ -182,7 +180,7 @@ class WaterRocket :
                 self.air_pressure.append(0)
         return self.air_pressure
     
-    def calc_ejection_velocity(self):
+    def calc_ejection_velocity(self) -> list :
         """Function calculating the ejection velocity variation in two phases : water ejection and air ejection
 
         Args: 
@@ -207,7 +205,7 @@ class WaterRocket :
                 self.ejection_velocity.append(0)
         return self.ejection_velocity
     
-    def calc_time(self):
+    def calc_time(self) -> list :
         """Function calculating the rocket launching time
 
         Args:
@@ -246,7 +244,7 @@ class WaterRocket :
                 self.time.append(self.time[i + 51]+ 0.05)
         return self.time
         
-    def calc_dust(self) :
+    def calc_dust(self) -> list :
         """Function calculating the rocket dust (in water phase and air phase)
 
         Args:
@@ -272,7 +270,7 @@ class WaterRocket :
                 self.dust.append(0)
         return self.dust
 
-    def calc_mass(self):
+    def calc_mass(self) -> list :
         """Function calculating the rocket mass variation during the flight
 
         Args:
@@ -363,7 +361,7 @@ class WaterRocket :
             
         return self.rampe_tilt,self.v_rocket,self.air_resistance
 
-    def calc_x_y(self) :
+    def calc_x_y(self):
         """Function calculating simultaneously the x and y position of the rocket
 
         Args:
@@ -388,7 +386,7 @@ class WaterRocket :
                 self.y.append(self.y[i-1]+self.v_rocket[i]*(self.time[i]-self.time[i-1])*np.sin(self.rampe_tilt[i]*np.pi/180))
         return self.x,self.y
     
-    def calc_accel(self) :
+    def calc_accel(self) -> list :
         """Function calculating the rocket acceleration (following y)
 
         Args:
@@ -411,7 +409,7 @@ class WaterRocket :
                     self.acceleration_y.append((self.v_rocket[i]-self.v_rocket[i-1])/(self.time[i]-self.time[i-1]))
         return self.acceleration_y
     
-    def calc_all_caracteristics(self) :
+    def calc_all_caracteristics(self):
         """Function calculating all caracteristics of the rocket flight
 
         Returns: self.air_volume, self.air_pressure, self.ejection_velocity, self.time, self.dust, self.rocket_mass, self.rampe_tilt, self.v_rocket, self.air_resistance, self.x, self.y, self.acceleration_y
@@ -437,7 +435,7 @@ class WaterRocket :
         
         return self.air_volume, self.air_pressure, self.ejection_velocity, self.time, self.dust, self.rocket_mass, self.rampe_tilt, self.v_rocket, self.air_resistance, self.x, self.y, self.acceleration_y
     
-    def create_df(self, save_as_CSV:bool=True) :
+    def create_df(self, save_as_CSV:bool=True) -> pd.DataFrame :
         """Function calculating all caracteristics of the rocket flight and create Pandas DataFrame
 
         Returns: 
@@ -454,7 +452,7 @@ class WaterRocket :
             self.rocket_data.to_csv("Rocket_data.csv",index=False)
         return self.rocket_data
     
-    def graphic_trajectory_with_highlights(self, save_fig:bool=False) : 
+    def graphic_trajectory_with_highlights(self, save_fig:bool=False) -> None : 
         """Function that shows the flight path plot of the water rocket with all highlights
 
         Args:
@@ -486,7 +484,7 @@ class WaterRocket :
             plt.savefig("./img/flight_path.png",bbox_inches='tight')
         plt.show()
     
-    def graphic_decomposed_trajectory(self, save_fig:bool=False) :
+    def graphic_decomposed_trajectory(self, save_fig:bool=False) -> None :
         """Function that shows the decomposed flight path plot of the water rocket (water phase, air phase and residual phase)
 
         Args:
@@ -514,7 +512,7 @@ class WaterRocket :
             plt.savefig("./img/decomposed_flight_path.png",bbox_inches='tight')
         plt.show()
 
-    def graphic_velocity_x(self, save_fig:bool=False) :
+    def graphic_velocity_x(self, save_fig:bool=False) -> None :
         """Function that generates the variation of rocket velocity depending of x
 
         Args:
@@ -544,7 +542,7 @@ class WaterRocket :
             plt.savefig("./img/velocity_x.png", bbox_inches='tight')
         plt.show()
 
-    def graphic_velocity_t(self, save_fig:bool=False) :
+    def graphic_velocity_t(self, save_fig:bool=False) -> None :
         """Function that generates the variation of rocket velocity depending of time
 
         Args:
@@ -574,7 +572,7 @@ class WaterRocket :
             plt.savefig("./img/velocity_t.png", bbox_inches='tight')
         plt.show()
     
-    def graphic_dust(self, save_fig:bool=False) :
+    def graphic_dust(self, save_fig:bool=False) -> None :
         """Function that shows the variation the rocket dust
 
         Args:
@@ -600,7 +598,7 @@ class WaterRocket :
             plt.savefig("./img/dust.png", bbox_inches='tight')
         plt.show()
     
-    def graphic_decomposed_dust(self, save_fig:bool=False) :
+    def graphic_decomposed_dust(self, save_fig:bool=False) -> None :
         """Function that shows the variation the rocket dust with highlighting the two phase (water and air)
 
         Args:
@@ -627,7 +625,7 @@ class WaterRocket :
             plt.savefig("./img/decomposed_dust.png", bbox_inches='tight')
         plt.show()
     
-    def graphic_ejection_water(self,save_fig:bool=False) :
+    def graphic_ejection_water(self,save_fig:bool=False) -> None :
         """Function that shows the variation of the water ejection during the flight
 
         Args:
@@ -650,7 +648,7 @@ class WaterRocket :
             plt.savefig("./img/water_ejection.png", bbox_inches='tight')
         plt.show()
     
-    def graphic_ejection_air(self,save_fig:bool=False) :
+    def graphic_ejection_air(self,save_fig:bool=False) -> None :
         """Function that shows the variation of the air ejection during the flight
 
         Args:
@@ -674,7 +672,7 @@ class WaterRocket :
             plt.savefig("./img/air_ejection.png", bbox_inches='tight')
         plt.show()
     
-    def graphic_highlight_table(self, save_fig:bool=False) : 
+    def graphic_highlight_table(self, save_fig:bool=False) -> None : 
         """Function that shows table with all flight highlights
 
         Args:
@@ -735,7 +733,7 @@ class WaterRocket :
             plt.savefig("./img/table_highlights.png", bbox_inches='tight', dpi=150)
         plt.show()
     
-    def graphic_all(self, save_fig:bool=False) :
+    def graphic_all(self, save_fig:bool=False) -> None :
         """Function that generates all figures
 
         Args:
@@ -751,9 +749,53 @@ class WaterRocket :
         self.graphic_ejection_air(save_fig=save_fig)
         self.graphic_highlight_table(save_fig=save_fig)
 
+    def show_flight_infos(self) : 
+        """Function showing all informations about the flight
+        """
+        self.create_df(save_as_CSV=False)
+        # Flight informations
+        header = ['Quantity', 'Value']
+        enviro_info = [
+            ['Gravity acceleration (m/s²)', self.g],
+            ['Water resistance', self.r],
+            ['Air resistance', self.ra],
+            ['Atmospheric pressure (Pa)', self.p_atm]
+        ]
+        rocket_info = [
+            ['Empty rocket mass (Kg)', self.m_empty_rocket],
+            ['Bottle volume (m3)', self.bottle_volume],
+            ['Initial water volume (m3)', self.initial_water_volume],
+            ['Bottle section (m)', self.bottle_section],
+            ['Output section (m)', self.output_section],
+            ['Length rampe (m)', self.length_rampe],
+            ['Initial pressure (Pa)' , self.initial_pressure],
+            ['Initial rocket speed (m/s)', self.v_ramp_output],
+            ['Beta', self.beta],
+            ['Cx', self.Cx]
+        ]
+        # Flight highlights
+        data =  [
+            [ 'Maximal speed (m/s)', self.rocket_data["Rocket velocity"].max()],
+            [ 'Maximal speed (km/h)', self.rocket_data["Rocket velocity"].max()*3.6],
+            ['Maximal dust (N)', self.rocket_data["Dust"].max()],
+            ['Maximal acceleration (m/s²)', self.rocket_data["Acceleration"].max()],
+            ["Maximal air resistance (N)", self.rocket_data["Air resistance"].max()],
+            ['Apogee (m)', self.rocket_data["y"].max()],
+            ['Maximum extent (m)', self.rocket_data["x"].max()],
+            ["Duration of water ejection (s)", self.rocket_data["Time"].loc[29]],
+            ["Duration of air ejection (s)", self.rocket_data["Time"].loc[49]-self.rocket_data["Time"].loc[29]],
+            ["Total flight time (s)", self.rocket_data["Time"].loc[206]]
+        ]
+
+        print("Environment informations\n")
+        print(tabulate(enviro_info, headers=header))
+        print("Rocket informations\n")
+        print(tabulate(rocket_info, headers=header))
+        print("Flight informations\n")
+        print(tabulate(data, headers=header))
+
     # PDF Generation
-    
-    def createPDF(self, path_to_save_pdf:str="report.pdf", saveImgs:bool=False, author:str="No one"):
+    def createPDF(self, path_to_save_pdf:str="report.pdf", saveImgs:bool=False, author:str="No one") -> None :
         """Function that generate a flight report and can be saved as PDF file
 
         Args:

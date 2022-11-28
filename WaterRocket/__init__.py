@@ -7,4 +7,4 @@ __maintainer__ = "Mohamed Nennouche"
 __email__ = "moohaaameed.nennouche@gmail.com"
 __status__ = "Production"
 
-# TODO : Add licence file
+from waterRocket import WaterRocket
