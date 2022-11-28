@@ -449,7 +449,7 @@ class WaterRocket :
             self.rocket_data.to_csv("Rocket_data.csv",index=False)
         return self.rocket_data
     
-    def graphic_trajectory_with_highlights(self, save_fig:bool=False) -> None : 
+    def graphic_trajectory_with_highlights(self, save_fig:bool=False, show_figure:bool=False) -> None : 
         """Function that shows the flight path plot of the water rocket with all highlights
 
         Args:
@@ -479,9 +479,10 @@ class WaterRocket :
             if not os.path.isdir("./img") :
                 os.mkdir("./img")
             plt.savefig("./img/flight_path.png",bbox_inches='tight')
-        plt.show()
+        if show_figure :
+            plt.show()
     
-    def graphic_decomposed_trajectory(self, save_fig:bool=False) -> None :
+    def graphic_decomposed_trajectory(self, save_fig:bool=False, show_figure:bool=False) -> None :
         """Function that shows the decomposed flight path plot of the water rocket (water phase, air phase and residual phase)
 
         Args:
@@ -507,9 +508,10 @@ class WaterRocket :
             if not os.path.isdir("./img") :
                 os.mkdir("./img")
             plt.savefig("./img/decomposed_flight_path.png",bbox_inches='tight')
-        plt.show()
+        if show_figure :
+            plt.show()
 
-    def graphic_velocity_x(self, save_fig:bool=False) -> None :
+    def graphic_velocity_x(self, save_fig:bool=False, show_figure:bool=False) -> None :
         """Function that generates the variation of rocket velocity depending of x
 
         Args:
@@ -537,9 +539,10 @@ class WaterRocket :
             if not os.path.isdir("./img") :
                 os.mkdir("./img")
             plt.savefig("./img/velocity_x.png", bbox_inches='tight')
-        plt.show()
+        if show_figure :
+            plt.show()
 
-    def graphic_velocity_t(self, save_fig:bool=False) -> None :
+    def graphic_velocity_t(self, save_fig:bool=False, show_figure:bool=False) -> None :
         """Function that generates the variation of rocket velocity depending of time
 
         Args:
@@ -567,9 +570,10 @@ class WaterRocket :
             if not os.path.isdir("./img") :
                 os.mkdir("./img")
             plt.savefig("./img/velocity_t.png", bbox_inches='tight')
-        plt.show()
+        if show_figure :
+            plt.show()
     
-    def graphic_dust(self, save_fig:bool=False) -> None :
+    def graphic_dust(self, save_fig:bool=False, show_figure:bool=False) -> None :
         """Function that shows the variation the rocket dust
 
         Args:
@@ -593,9 +597,10 @@ class WaterRocket :
             if not os.path.isdir("./img") :
                 os.mkdir("./img")
             plt.savefig("./img/dust.png", bbox_inches='tight')
-        plt.show()
+        if show_figure :
+            plt.show()
     
-    def graphic_decomposed_dust(self, save_fig:bool=False) -> None :
+    def graphic_decomposed_dust(self, save_fig:bool=False, show_figure:bool=False) -> None :
         """Function that shows the variation the rocket dust with highlighting the two phase (water and air)
 
         Args:
@@ -620,9 +625,10 @@ class WaterRocket :
             if not os.path.isdir("./img") :
                 os.mkdir("./img")
             plt.savefig("./img/decomposed_dust.png", bbox_inches='tight')
-        plt.show()
+        if show_figure :
+            plt.show()
     
-    def graphic_ejection_water(self,save_fig:bool=False) -> None :
+    def graphic_ejection_water(self,save_fig:bool=False, show_figure:bool=False) -> None :
         """Function that shows the variation of the water ejection during the flight
 
         Args:
@@ -643,9 +649,10 @@ class WaterRocket :
             if not os.path.isdir("./img") :
                 os.mkdir("./img")
             plt.savefig("./img/water_ejection.png", bbox_inches='tight')
-        plt.show()
+        if show_figure :
+            plt.show()
     
-    def graphic_ejection_air(self,save_fig:bool=False) -> None :
+    def graphic_ejection_air(self,save_fig:bool=False, show_figure:bool=False) -> None :
         """Function that shows the variation of the air ejection during the flight
 
         Args:
@@ -667,9 +674,10 @@ class WaterRocket :
             if not os.path.isdir("./img") :
                 os.mkdir("./img")
             plt.savefig("./img/air_ejection.png", bbox_inches='tight')
-        plt.show()
+        if show_figure :
+            plt.show()
     
-    def graphic_highlight_table(self, save_fig:bool=False) -> None : 
+    def graphic_highlight_table(self, save_fig:bool=False, show_figure:bool=False) -> None : 
         """Function that shows table with all flight highlights
 
         Args:
@@ -728,23 +736,24 @@ class WaterRocket :
             if not os.path.isdir("./img") :
                 os.mkdir("./img")
             plt.savefig("./img/table_highlights.png", bbox_inches='tight', dpi=150)
-        plt.show()
+        if show_figure :
+            plt.show()
     
-    def graphic_all(self, save_fig:bool=False) -> None :
+    def graphic_all(self, save_fig:bool=False, show_figure:bool=False) -> None :
         """Function that generates all figures
 
         Args:
             save_fig (bool, optional): Define if you would save the image of plot or not. Defaults to False.
         """
-        self.graphic_trajectory_with_highlights(save_fig=save_fig)
-        self.graphic_decomposed_trajectory(save_fig=save_fig)
-        self.graphic_velocity_x(save_fig=save_fig)
-        self.graphic_velocity_t(save_fig=save_fig)
-        self.graphic_dust(save_fig=save_fig)
-        self.graphic_decomposed_dust(save_fig=save_fig)
-        self.graphic_ejection_water(save_fig=save_fig)
-        self.graphic_ejection_air(save_fig=save_fig)
-        self.graphic_highlight_table(save_fig=save_fig)
+        self.graphic_trajectory_with_highlights(save_fig=save_fig, show_figure=show_figure)
+        self.graphic_decomposed_trajectory(save_fig=save_fig, show_figure=show_figure)
+        self.graphic_velocity_x(save_fig=save_fig, show_figure=show_figure)
+        self.graphic_velocity_t(save_fig=save_fig, show_figure=show_figure)
+        self.graphic_dust(save_fig=save_fig, show_figure=show_figure)
+        self.graphic_decomposed_dust(save_fig=save_fig, show_figure=show_figure)
+        self.graphic_ejection_water(save_fig=save_fig, show_figure=show_figure)
+        self.graphic_ejection_air(save_fig=save_fig, show_figure=show_figure)
+        self.graphic_highlight_table(save_fig=save_fig, show_figure=show_figure)
 
     def show_flight_infos(self, save_in_text=False, path_to_text="flight_info.txt") : 
         """Function showing all informations about the flight
