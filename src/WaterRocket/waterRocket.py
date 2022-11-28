@@ -526,10 +526,10 @@ class WaterRocket :
             'size': 16,
             }
         plt.plot(data["x"],data["Rocket velocity"], label="Flight speed evolution")
-        plt.scatter(data["x"].loc[119],data["Rocket velocity"].loc[119], marker="+", label="Apogee", c="r", s=150)
+        plt.scatter(data["x"].loc[data["y"].argmax()],data["Rocket velocity"].loc[data["y"].argmax()], marker="+", label="Apogee", c="r", s=150)
         x_cast = "{:.2f}".format(data["x"].loc[data["y"].argmax()])
         y_cast = "{:.2f}".format(data["y"].loc[data["y"].argmax()])
-        plt.text(data["x"].loc[119]+0.5,data["Rocket velocity"].loc[119], "x = {}\ny = {}".format(x_cast,y_cast))
+        plt.text(data["x"].loc[data["y"].argmax()]+1,data["Rocket velocity"].loc[data["y"].argmax()], "x = {}\ny = {}".format(x_cast,y_cast))
         plt.legend()
         plt.title("Speed of the rocket as a function of x", fontdict=font)
         plt.xlabel("Distance (m)",fontsize=14)
@@ -557,10 +557,10 @@ class WaterRocket :
             'size': 16,
             }
         plt.plot(data["Time"],data["Rocket velocity"], label="Flight speed evolution")
-        plt.scatter(data["Time"].loc[119],data["Rocket velocity"].loc[119], marker="+", label="Apogee", c="r", s=150)
+        plt.scatter(data["Time"].loc[data["y"].argmax()],data["Rocket velocity"].loc[data["y"].argmax()], marker="+", label="Apogee", c="r", s=150)
         x_cast = "{:.2f}".format(data["x"].loc[data["y"].argmax()])
         y_cast = "{:.2f}".format(data["y"].loc[data["y"].argmax()])
-        plt.text(data["Time"].loc[119]+0.5,data["Rocket velocity"].loc[119], "x = {}\ny = {}".format(x_cast,y_cast))
+        plt.text(data["Time"].loc[data["y"].argmax()]+1,data["Rocket velocity"].loc[data["y"].argmax()], "x = {}\ny = {}".format(x_cast,y_cast))
         plt.legend()
         plt.title("Speed of the rocket as a function of time", fontdict=font)
         plt.xlabel("Time (s)",fontsize=14)
