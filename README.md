@@ -13,6 +13,6 @@ myRocket = WaterRocket()
 ```
 For a getting started Notebook example click [here](./examples/getting_started.ipynb)
 ## Documentation 
-All the documentation about the module methods and components describe [here](documentation.md)
+All the documentation about the module methods and components describe [here](./doc/)
 ## Creator and maintainer
 Mohamed Nennouche

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: WaterRocket
-Version: 0.1.1
+Version: 0.1.2
 Summary: UNKNOWN
 Home-page: https://github.com/MohamedNennouche/Water-rocket-launch-simulator
 Author: Mohamed Nennouche
@@ -8,7 +8,8 @@ Author-email: moohaameed.nennouche@gmail.com
 License: MIT
 Keywords: water rocket simulation
 Platform: UNKNOWN
+Description-Content-Type: text/markdown
 License-File: LICENSE.rst
 
-UNKNOWN
+WaterRocket is a Python module for simulating the firing of a water rocket, allowing to generate graphs of the evolution during the flight as well as a PDF report of this flight
 
