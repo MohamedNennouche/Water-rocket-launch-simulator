@@ -6,4 +6,4 @@ __maintainer__ = "Mohamed Nennouche"
 __email__ = "moohaaameed.nennouche@gmail.com"
 __status__ = "Production"
 
-from waterRocket import WaterRocket
+from .waterRocket import WaterRocket
