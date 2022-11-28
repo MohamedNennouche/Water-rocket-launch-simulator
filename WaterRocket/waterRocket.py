@@ -17,10 +17,7 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 
 from tabulate import tabulate
-
-# TODO : Ajouter un module de simulation par rapport à une des variables d'entrée pour évaluer son changement et son impact sur l'apogée
-# TODO : ajouter éventuellement la masse volumique du liquide en entrée pour évaluer l'utilisation d'autres liquide que l'eau
-# TODO : Revoir le rapport PDF pour ajouter une partie entière sur la théorie et ajouter une page de garde avec un logo, le nom de l'auteur, la date et un code pour le vol
+import codecs
 
 
 def create_style(styleName, 
@@ -749,7 +746,7 @@ class WaterRocket :
         self.graphic_ejection_air(save_fig=save_fig)
         self.graphic_highlight_table(save_fig=save_fig)
 
-    def show_flight_infos(self) : 
+    def show_flight_infos(self, save_in_text=False, path_to_text="flight_info.txt") : 
         """Function showing all informations about the flight
         """
         self.create_df(save_as_CSV=False)
@@ -757,8 +754,8 @@ class WaterRocket :
         header = ['Quantity', 'Value']
         enviro_info = [
             ['Gravity acceleration (m/s²)', self.g],
-            ['Water resistance', self.r],
-            ['Air resistance', self.ra],
+            ['Water density (Kg/m3)', self.r],
+            ['Air density (Kg/m3)', self.ra],
             ['Atmospheric pressure (Pa)', self.p_atm]
         ]
         rocket_info = [
@@ -787,12 +784,28 @@ class WaterRocket :
             ["Total flight time (s)", self.rocket_data["Time"].loc[206]]
         ]
 
-        print("Environment informations\n")
-        print(tabulate(enviro_info, headers=header))
-        print("Rocket informations\n")
-        print(tabulate(rocket_info, headers=header))
-        print("Flight informations\n")
-        print(tabulate(data, headers=header))
+        print(" Environment informations ".center(80, '*'))
+        print(tabulate(enviro_info, headers=header, numalign='left'))
+        print("\n")
+        print(" Rocket informations ".center(80, '*'))
+        print(tabulate(rocket_info, headers=header, numalign='left'))
+        print("\n")
+        print(" Flight informations ".center(80, '*'))
+        print(tabulate(data, headers=header, numalign='left'))
+
+        if save_in_text :
+            with codecs.open(path_to_text, "w", "utf-8") as f :
+                f.write(" Environment informations ".center(80, '*'))
+                f.write("\n")
+                f.write(tabulate(enviro_info, headers=header, numalign='left'))
+                f.write("\n")
+                f.write(" Rocket informations ".center(80, '*'))
+                f.write("\n")
+                f.write(tabulate(rocket_info, headers=header, numalign='left'))
+                f.write("\n")
+                f.write(" Flight informations ".center(80, '*'))
+                f.write("\n")
+                f.write(tabulate(data, headers=header, numalign='left'))
 
     # PDF Generation
     def createPDF(self, path_to_save_pdf:str="report.pdf", saveImgs:bool=False, author:str="No one") -> None :
